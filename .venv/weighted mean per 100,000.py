@@ -1,0 +1,32 @@
+import pandas as pd
+import numpy as np
+
+df = pd.read_excel(r'C:\Users\examp\OneDrive\Робочий стіл\data_cts_violent_and_sexual_crime.xlsx')
+filtered_df = df[df['Unit of measurement'].str.strip().str.lower() == 'rate per 100,000 population'].copy()
+source_weights = {
+    'CTS': 8,
+    'Computed/CTS': 9,
+    'CTS/DATASUS': 9,
+    'CTS/Computed': 9,
+    'CTS/DMDB': 8,
+    'CTS/MoI': 7,
+    'CTS/NGO': 7,
+    'CTS/NSO': 8,
+    'CTS/PPR': 8,
+    'DMDB': 8,
+    'MNS': 7,
+    'MoI': 7,
+    'MoI/CTS': 7,
+    'NGO': 7,
+    'NGO/CTS': 7,
+    'NSO': 8,
+    'PPR': 8,
+    'PPR/CTS': 8,
+}
+
+filtered_df['Weight'] = filtered_df['Source'].map(source_weights)
+filtered_df['Weight'] = filtered_df['Weight'].fillna(1)
+
+weighted_mean = np.average(filtered_df['VALUE'], weights=filtered_df['Weight'])
+
+print(f"Середнє вагове значення для стовпця 'VALUE' з використанням заданих ваг: {weighted_mean:.2f}")
